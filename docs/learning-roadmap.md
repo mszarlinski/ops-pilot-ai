@@ -12,7 +12,7 @@ Status legend: ⬜ not started · 🟨 in progress · ✅ complete
 service: REST API design for AI features, structured outputs, prompt
 engineering basics, model invocation, and error handling.
 
-- 🟨 **Step 1 — Project bootstrap & deterministic classifier.**
+- ✅ **Step 1 — Project bootstrap & deterministic classifier.**
   FastAPI app with `POST /incidents/analyze`. Request/response models defined.
   Classification logic intentionally unimplemented (HTTP 501).
   *Exercise:* implement a deterministic (non-LLM) classifier:
@@ -24,8 +24,11 @@ engineering basics, model invocation, and error handling.
 - ✅ **Step 2 — Replace the deterministic rule with a real LLM call** via the
   Claude API (`client.messages.parse`, structured outputs with
   `output_format=IncidentAnalysis`) instead of free-text parsing.
-- ⬜ **Step 3 — Error handling & reliability**: timeouts, retries, rate
-  limits, malformed/unsafe model output, fallback behavior.
+- ✅ **Step 3 — Error handling & reliability**: `app/llm.py` maps specific
+  `anthropic` exceptions to typed `LLMUnavailableError` (transient — rate
+  limit, connection error, 5xx) vs `LLMRequestError` (non-retryable — bad
+  request, auth), raised with `from err` to preserve the cause. The FastAPI
+  endpoint translates these to HTTP 503 and 502 respectively.
 - ⬜ **Step 4 — Prompt engineering**: system prompt design, few-shot examples,
   evaluating prompt changes against a small fixed test set.
 

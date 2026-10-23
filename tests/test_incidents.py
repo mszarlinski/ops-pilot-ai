@@ -2,6 +2,7 @@ from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
+from app.llm import LLMRequestError, LLMUnavailableError
 from app.main import app
 from app.models import IncidentAnalysis
 
@@ -29,3 +30,23 @@ def test_analyze_incident_rejects_description_too_short():
     response = client.post("/incidents/analyze", json={"description": "too short"})
 
     assert response.status_code == 422
+
+
+def test_analyze_incident_returns_503_when_llm_unavailable():
+    with patch("app.main.classify_incident", side_effect=LLMUnavailableError("down")):
+        response = client.post(
+            "/incidents/analyze",
+            json={"description": "Database connection timeout on prod-db-01"},
+        )
+
+    assert response.status_code == 503
+
+
+def test_analyze_incident_returns_502_when_llm_request_rejected():
+    with patch("app.main.classify_incident", side_effect=LLMRequestError("bad request")):
+        response = client.post(
+            "/incidents/analyze",
+            json={"description": "Database connection timeout on prod-db-01"},
+        )
+
+    assert response.status_code == 502
