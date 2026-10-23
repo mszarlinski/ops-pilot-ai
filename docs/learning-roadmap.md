@@ -21,9 +21,9 @@ engineering basics, model invocation, and error handling.
   - Otherwise → `category=OTHER`, `severity=LOW`.
   - `summary` and `suggested_action` must be non-empty.
   - Invalid input (description outside 10–2000 chars) → HTTP 422.
-- ⬜ **Step 2 — Replace the deterministic rule with a real LLM call** via the
-  OpenAI Responses API, using structured outputs (Pydantic-validated) instead
-  of free-text parsing.
+- ✅ **Step 2 — Replace the deterministic rule with a real LLM call** via the
+  Claude API (`client.messages.parse`, structured outputs with
+  `output_format=IncidentAnalysis`) instead of free-text parsing.
 - ⬜ **Step 3 — Error handling & reliability**: timeouts, retries, rate
   limits, malformed/unsafe model output, fallback behavior.
 - ⬜ **Step 4 — Prompt engineering**: system prompt design, few-shot examples,

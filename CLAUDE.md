@@ -45,7 +45,7 @@ integrations.
 - Python 3.12+, managed with `uv`
 - FastAPI + Pydantic for the API layer
 - pytest + httpx for testing
-- OpenAI Responses API for the first LLM integration (Lab 01)
+- Anthropic Claude API for the first LLM integration (Lab 01)
 - SQLite for persistence and full-text search
 - ChromaDB for vector search/embeddings (introduced in Lab 02)
 - MCP Python SDK for tool integration (introduced in Lab 04)
@@ -58,14 +58,14 @@ directly, not to learn a framework's abstractions over them.
 
 ## Current learning stage
 
-**Lab 01 — Direct LLM Integration, Step 1: project bootstrap.**
+**Lab 01 — Direct LLM Integration, Step 2: real LLM call.**
 
-- Repository scaffolded with FastAPI app, `POST /incidents/analyze` endpoint,
-  `IncidentRequest` / `IncidentAnalysis` models.
-- Classification logic is intentionally unimplemented (returns HTTP 501).
-- No LLM calls yet. No vector DB, queue, or agent framework yet.
-- The user's next task: implement a deterministic keyword-based classifier
-  (no LLM) as described in `docs/learning-roadmap.md`, to establish the
-  API/testing scaffold before introducing the LLM call.
+- Step 1 (deterministic classifier, API/testing scaffold) is complete.
+- `app/llm.py` calls the Claude API (`client.messages.parse`, model
+  `claude-opus-5`) with structured outputs (`output_format=IncidentAnalysis`)
+  so the response is validated directly into the Pydantic model.
+- Error handling is "log and re-raise" only — no retries/timeouts/fallback
+  yet; that is Step 3.
+- No vector DB, queue, or agent framework yet.
 
 See `docs/learning-roadmap.md` for the full lab plan and completion tracking.
