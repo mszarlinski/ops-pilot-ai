@@ -11,6 +11,3 @@ wheels/
 
 # Test artifacts
 .pytest_cache/
-
-# Secrets
-.env
