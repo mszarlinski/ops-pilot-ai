@@ -29,8 +29,17 @@ engineering basics, model invocation, and error handling.
   limit, connection error, 5xx) vs `LLMRequestError` (non-retryable — bad
   request, auth), raised with `from err` to preserve the cause. The FastAPI
   endpoint translates these to HTTP 503 and 502 respectively.
-- ⬜ **Step 4 — Prompt engineering**: system prompt design, few-shot examples,
-  evaluating prompt changes against a small fixed test set.
+- ✅ **Step 4 — Prompt engineering & evaluation**: `category`/`severity`
+  constrained to `Literal[...]` enums (5 categories, 3 severities) instead of
+  free-form `str`; `SYSTEM_PROMPT` explicitly defines what each category and
+  severity means. `tests/test_classification_eval.py` is a fixed, hand-labeled
+  13-case eval (opt-in via `RUN_EVALS=1`, since it hits the real API) that
+  measures classification accuracy — went from 0% (no value constraints) to
+  100% after the schema + prompt changes. Two eval failures along the way
+  turned out to be mislabeled ground truth, not model errors — a reminder
+  that the eval set itself needs review, not just the prompt.
+
+**Lab 01 complete.**
 
 ## Lab 02 — Retrieval-Augmented Generation (RAG)
 
@@ -39,7 +48,21 @@ search (ChromaDB), full-text search (SQLite FTS), hybrid search, reranking,
 and retrieval evaluation. Includes hands-on comparison of semantic vs.
 keyword-based retrieval.
 
-- ⬜ Not started.
+- ⬜ **Step 1 — Document ingestion & chunking.** Build a small corpus of
+  simulated runbook/KB documents, split them into chunks with metadata
+  (source, position), and persist them (SQLite). No search yet — this
+  establishes the corpus every later step retrieves from.
+- ⬜ **Step 2 — Full-text (keyword) search.** SQLite FTS5 over the chunk
+  corpus. This is the traditional-retrieval baseline you'll compare semantic
+  search against in Step 4.
+- ⬜ **Step 3 — Semantic search.** Embed the chunks and query them via
+  ChromaDB (vector similarity). Run the same queries through both FTS and
+  vector search side by side to see where each wins and loses.
+- ⬜ **Step 4 — Hybrid search, reranking & retrieval evaluation.** Combine
+  FTS + vector results, add a reranking step, and build a fixed eval set
+  (e.g. precision/recall@k) to measure retrieval quality — reusing the
+  evaluation pattern from Lab 01 Step 4, applied to retrieval instead of
+  classification.
 
 ## Lab 03 — Tool / Function Calling
 

@@ -41,8 +41,21 @@ http://127.0.0.1:8000/docs.
 uv run pytest
 ```
 
+## Running evals
+
+The classification eval hits the real Claude API (costs money, non-deterministic)
+and is skipped by default. Run it explicitly:
+
+```bash
+RUN_EVALS=1 uv run pytest tests/test_classification_eval.py -v
+```
+
 ## Current status
 
-Lab 01, Step 3: error handling & reliability. The `POST /incidents/analyze`
-endpoint classifies incidents via the Claude API using structured outputs.
-Model ID is configurable via the `LLM_MODEL` env var.
+**Lab 01 complete.** The `POST /incidents/analyze` endpoint classifies
+incidents via the Claude API using structured outputs constrained to a fixed
+category/severity enum, with typed error handling (503/502 for transient vs.
+non-retryable upstream failures) and a measured eval (100% on the fixed
+13-case set). Model ID is configurable via the `LLM_MODEL` env var.
+
+Lab 02 (RAG) is next — see `docs/learning-roadmap.md`.

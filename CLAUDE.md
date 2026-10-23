@@ -58,14 +58,16 @@ directly, not to learn a framework's abstractions over them.
 
 ## Current learning stage
 
-**Lab 01 — Direct LLM Integration, Step 2: real LLM call.**
+**Lab 01 (Direct LLM Integration) is complete. Starting Lab 02 (RAG).**
 
-- Step 1 (deterministic classifier, API/testing scaffold) is complete.
-- `app/llm.py` calls the Claude API (`client.messages.parse`, model
-  `claude-opus-5`) with structured outputs (`output_format=IncidentAnalysis`)
-  so the response is validated directly into the Pydantic model.
-- Error handling is "log and re-raise" only — no retries/timeouts/fallback
-  yet; that is Step 3.
-- No vector DB, queue, or agent framework yet.
+- `app/llm.py` calls the Claude API (`client.messages.parse`) with structured
+  outputs constrained to `Literal[...]` category/severity enums, a
+  `SYSTEM_PROMPT` that defines each enum value, and typed error handling
+  (`LLMUnavailableError`/`LLMRequestError` mapped to HTTP 503/502).
+- `tests/test_classification_eval.py` is a fixed, hand-labeled eval
+  (opt-in via `RUN_EVALS=1`, hits the real API) measuring classification
+  accuracy — currently 100% on 13 cases.
+- No vector DB, queue, or agent framework yet — Lab 02 introduces ChromaDB
+  and SQLite FTS for retrieval.
 
 See `docs/learning-roadmap.md` for the full lab plan and completion tracking.

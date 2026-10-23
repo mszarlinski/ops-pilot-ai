@@ -57,7 +57,22 @@ def get_client() -> Anthropic:
 
 SYSTEM_PROMPT = (
     "You are an IT incident triage assistant. Classify the incident "
-    "description you are given."
+    "description you are given.\n\n"
+    "category must be exactly one of:\n"
+    "- STORAGE: databases, disks, object storage (e.g. S3), backups, or "
+    "storage arrays.\n"
+    "- BACKEND: application or service logic, internal APIs, job queues, or "
+    "server-side errors not caused by storage or network infrastructure.\n"
+    "- NETWORK: connectivity, VPNs, DNS, load balancers, or packet loss "
+    "between systems.\n"
+    "- UI: frontend, layout, rendering, or visual/display issues.\n"
+    "- OTHER: anything that does not clearly fit the categories above.\n\n"
+    "severity must be exactly one of:\n"
+    "- HIGH: a core capability is broken or widely unavailable, data "
+    "integrity is at risk, or there is no workaround.\n"
+    "- MEDIUM: degraded performance or a partial, non-blocking impact; a "
+    "workaround usually exists.\n"
+    "- LOW: cosmetic or isolated issues with no functional impact."
 )
 
 
