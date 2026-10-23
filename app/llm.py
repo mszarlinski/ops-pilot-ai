@@ -6,6 +6,7 @@ depend on a stable interface instead of the Anthropic SDK directly.
 """
 
 import logging
+import os
 
 from anthropic import Anthropic, APIError
 from dotenv import load_dotenv
@@ -15,6 +16,8 @@ from app.models import IncidentAnalysis
 load_dotenv()
 
 logger = logging.getLogger(__name__)
+
+LLM_MODEL = os.environ["LLM_MODEL"]
 
 _client: Anthropic | None = None
 
@@ -41,7 +44,7 @@ def classify_incident(description: str) -> IncidentAnalysis:
     """
     try:
         response = get_client().messages.parse(
-            model="claude-opus-5",
+            model=LLM_MODEL,
             max_tokens=1024,
             system=SYSTEM_PROMPT,
             messages=[{"role": "user", "content": description}],

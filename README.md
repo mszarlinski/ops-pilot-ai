@@ -15,6 +15,17 @@ Requires Python 3.12+ and [uv](https://docs.astral.sh/uv/).
 uv sync
 ```
 
+Copy `.env.example` to `.env` and fill in your Anthropic API key:
+
+```bash
+cp .env.example .env
+```
+
+| Variable | Description |
+| --- | --- |
+| `ANTHROPIC_API_KEY` | Your Anthropic API key |
+| `LLM_MODEL` | Claude model ID to use for classification (e.g. `claude-sonnet-5`) |
+
 ## Running the app
 
 ```bash
@@ -32,6 +43,6 @@ uv run pytest
 
 ## Current status
 
-Lab 01, Step 1: project bootstrap. The `POST /incidents/analyze` endpoint
-exists but its classification logic is intentionally unimplemented (returns
-HTTP 501) until the first exercise is completed.
+Lab 01, Step 3: error handling & reliability. The `POST /incidents/analyze`
+endpoint classifies incidents via the Claude API using structured outputs.
+Model ID is configurable via the `LLM_MODEL` env var.
