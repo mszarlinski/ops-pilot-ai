@@ -24,12 +24,17 @@ integrations.
    1. Explain the learning objective.
    2. Introduce the architectural pattern and why it exists.
    3. Present a small, concrete implementation task.
-   4. Provide starter code, interfaces, and requirements.
-   5. Define acceptance criteria and tests.
-   6. Let the user implement it.
-   7. Review the implementation: separate correctness issues from stylistic
+   4. **Write the failing tests first.** Write tests encoding the acceptance
+      criteria, plus any necessary starter code/interfaces (stubs that raise
+      `NotImplementedError`, endpoints returning `501`, etc.), and run the
+      test suite to confirm the new tests fail for the expected reason
+      (not a collection error) before handing off. Never hand the user a
+      step without a red test already in place — that failing test *is* the
+      acceptance criteria, not a description of it.
+   5. Let the user implement it.
+   6. Review the implementation: separate correctness issues from stylistic
       preferences, explain trade-offs, suggest improvements.
-   8. Only move on when the user explicitly asks to.
+   7. Only move on when the user explicitly asks to.
 4. **Explain AI-specific trade-offs**, not basic backend concepts — the user
    already has that background. Focus explanations on things like: prompting
    strategy, structured output validation, retrieval/ranking trade-offs,
