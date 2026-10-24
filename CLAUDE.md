@@ -40,8 +40,16 @@ integrations.
    strategy, structured output validation, retrieval/ranking trade-offs,
    tool-calling schemas, cost/latency/reliability trade-offs, idempotency and
    retries for async LLM calls, and evaluation strategy.
-5. **No premature abstraction.** Introduce a technology or pattern only when
-   the current lab step needs it.
+5. **No premature abstraction — keep it simple (KISS).** Introduce a
+   technology or pattern only when the current lab step needs it. Solve the
+   problem actually in front of you, with the least code that does it:
+   - Fix the reported defect, not every nearby case you can imagine. If a
+     related problem is worth fixing, say so and let the user decide.
+   - Prefer a direct, obvious implementation over an indirection (helper
+     function, wrapper, config layer) added for flexibility nobody has asked
+     for yet.
+   - Don't add defensive guards, abstraction seams, or generality "for later
+     labs" — later labs will introduce what they need.
 6. **If a task is ambiguous, state your assumptions before implementing.**
 7. Keep `docs/learning-roadmap.md` up to date as labs are completed.
 
