@@ -63,9 +63,17 @@ keyword-based retrieval.
   vector search side by side to see where each wins and loses.
 - ⬜ **Step 4 — Hybrid search, reranking & retrieval evaluation.** Combine
   FTS + vector results, add a reranking step, and build a fixed eval set
-  (e.g. precision/recall@k) to measure retrieval quality — reusing the
+  (precision/recall@k) to measure retrieval quality — reusing the
   evaluation pattern from Lab 01 Step 4, applied to retrieval instead of
-  classification.
+  classification. The eval set is deliberately split into two query types:
+  (a) queries sharing vocabulary with the target chunk, where FTS should
+  already do well, and (b) paraphrased queries with little/no shared
+  vocabulary (e.g. "disk filling up" vs. a chunk about "storage array
+  nearing capacity"), where FTS is expected to miss and vector search is
+  expected to hit. This isolates *where* semantic search earns its cost —
+  recall on paraphrases, not raw query latency (vector search is slower
+  per-query than FTS at this corpus size, since it requires an embedding
+  API call; its advantage is retrieval quality, not speed).
 
 ## Lab 03 — Tool / Function Calling
 
