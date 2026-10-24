@@ -1,3 +1,5 @@
+import pytest
+
 from app.chunking import chunk_text
 
 
@@ -40,3 +42,8 @@ def test_chunk_empty_text():
     chunks = chunk_text(text, chunk_size=10, overlap=2)
 
     assert chunks == []
+
+
+def test_chunk_text_rejects_overlap_not_smaller_than_chunk_size():
+    with pytest.raises(ValueError):
+        chunk_text("abcdefghij", chunk_size=4, overlap=4)

@@ -45,6 +45,7 @@ class LLMRequestError(Exception):
     anthropic.AuthenticationError.
     """
 
+
 _client: Anthropic | None = None
 
 

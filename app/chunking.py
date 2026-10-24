@@ -17,7 +17,13 @@ def chunk_text(text: str, chunk_size: int = 500, overlap: int = 50) -> list[str]
     - The last chunk may be shorter than chunk_size.
     - If text is shorter than or equal to chunk_size, return it as a single
       chunk.
+
+    Raises ValueError if overlap >= chunk_size, which would stop `start` from
+    advancing and loop forever.
     """
+    if overlap >= chunk_size:
+        raise ValueError(f"overlap must be smaller than chunk_size, got {overlap} >= {chunk_size}")
+
     chunks = []
     start = 0
 
@@ -28,6 +34,3 @@ def chunk_text(text: str, chunk_size: int = 500, overlap: int = 50) -> list[str]
         start += chunk_size - overlap
 
     return chunks
-        
-
-
