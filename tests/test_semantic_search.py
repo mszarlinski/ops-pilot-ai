@@ -10,7 +10,8 @@ import chromadb
 import pytest
 
 from app.documents import init_db
-from app.search import create_fts_index, index_chunks as index_chunks_fts, search_fulltext
+from app.search import create_fts_index, search_fulltext
+from app.search import index_chunks as index_chunks_fts
 from app.semantic_search import create_collection, index_chunks, search_semantic
 
 # Deliberately worded so that "disk filling up" shares no vocabulary with the

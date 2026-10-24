@@ -19,12 +19,22 @@ dependencies = [
 dev = [
     "pytest>=8.3",
     "httpx>=0.27",
+    "ruff>=0.14",
 ]
 
 [tool.uv]
 # chromadb pulls onnxruntime for its default (local) embedding function.
 # onnxruntime dropped macOS x86_64 wheels after 1.23, so cap it here.
 constraint-dependencies = ["onnxruntime<1.24"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+# Ruff's defaults (pyflakes + the pycodestyle subset that catches real bugs),
+# plus import sorting, which is where this project actually drifted.
+# E501 is deliberately absent: the eval cases in tests are long prose strings.
+select = ["E4", "E7", "E9", "F", "I"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
