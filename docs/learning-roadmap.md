@@ -48,10 +48,13 @@ search (ChromaDB), full-text search (SQLite FTS), hybrid search, reranking,
 and retrieval evaluation. Includes hands-on comparison of semantic vs.
 keyword-based retrieval.
 
-- ⬜ **Step 1 — Document ingestion & chunking.** Build a small corpus of
-  simulated runbook/KB documents, split them into chunks with metadata
-  (source, position), and persist them (SQLite). No search yet — this
-  establishes the corpus every later step retrieves from.
+- ✅ **Step 1 — Document ingestion & chunking.** `data/runbooks/*.md` is a
+  5-document corpus (storage, object storage, network/VPN, API errors,
+  frontend) mirroring the Lab 01 category taxonomy. `app/chunking.py`
+  implements fixed-size chunking with overlap via direct string slicing
+  (`text[start:start+chunk_size]`, `start` advancing by
+  `chunk_size - overlap`) — no manual character accumulation. `app/documents.py`
+  persists chunks to SQLite (`chunks` table) via `ingest_documents`.
 - ⬜ **Step 2 — Full-text (keyword) search.** SQLite FTS5 over the chunk
   corpus. This is the traditional-retrieval baseline you'll compare semantic
   search against in Step 4.
