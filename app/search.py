@@ -19,28 +19,51 @@ class SearchResult(BaseModel):
 def create_fts_index(conn: sqlite3.Connection) -> None:
     """Create the chunks_fts virtual table, if it doesn't already exist.
 
-    Lab 02 Step 2 exercise: create an FTS5 virtual table with columns
-    (id, document_id, text), where `id` and `document_id` are metadata you
-    want to retrieve but not search against (mark them UNINDEXED), and
-    `text` is the column FTS5 should tokenize and index.
+    `id` and `document_id` are UNINDEXED: they come back with every hit as
+    metadata, but FTS5 does not tokenize them, so a query can never match a
+    chunk on its identifier.
     """
-    raise NotImplementedError("Lab 02 Step 2 exercise: create the chunks_fts FTS5 virtual table")
+    conn.execute(
+        """
+        CREATE VIRTUAL TABLE IF NOT EXISTS chunks_fts USING fts5 (
+            id UNINDEXED,
+            document_id UNINDEXED,
+            text
+        )
+        """
+    )
+    conn.commit()
 
 
 def index_chunks(conn: sqlite3.Connection) -> None:
     """Populate chunks_fts from the existing chunks table.
 
-    Lab 02 Step 2 exercise: copy (id, document_id, text) from `chunks` into
-    `chunks_fts` so it becomes searchable.
+    Rebuilds the index from scratch so repeated calls stay idempotent rather
+    than inserting every chunk a second time.
     """
-    raise NotImplementedError("Lab 02 Step 2 exercise: populate chunks_fts from chunks")
+    conn.execute("DELETE FROM chunks_fts")
+    conn.execute("INSERT INTO chunks_fts (id, document_id, text) SELECT id, document_id, text FROM chunks")
+    conn.commit()
 
 
 def search_fulltext(conn: sqlite3.Connection, query: str, k: int = 5) -> list[SearchResult]:
     """Return the top-k chunks matching query, ranked by BM25 relevance.
 
-    Lab 02 Step 2 exercise: query chunks_fts with MATCH, rank with bm25(),
-    and return results best-match-first. Remember: SQLite's bm25() returns
-    more negative values for better matches, so order ascending.
+    SQLite's bm25() is more negative for better matches, so rows are ordered
+    ascending and the sign is flipped on the way out: a higher `score` means
+    a better match, which is the convention Step 4's hybrid ranking needs.
     """
-    raise NotImplementedError("Lab 02 Step 2 exercise: implement the MATCH + bm25 query")
+    rows = conn.execute(
+        """
+        SELECT id, document_id, text, bm25(chunks_fts) AS rank
+        FROM chunks_fts
+        WHERE chunks_fts MATCH ?
+        ORDER BY rank
+        LIMIT ?
+        """,
+        (query, k),
+    ).fetchall()
+    return [
+        SearchResult(chunk_id=row[0], document_id=row[1], text=row[2], score=-row[3])
+        for row in rows
+    ]
