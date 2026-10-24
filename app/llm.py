@@ -17,6 +17,7 @@ from anthropic import (
     RateLimitError,
 )
 from dotenv import load_dotenv
+from pydantic import ValidationError
 
 from app.models import IncidentAnalysis
 
@@ -98,5 +99,18 @@ def classify_incident(description: str) -> IncidentAnalysis:
     except (BadRequestError, AuthenticationError) as err:
         logger.exception("Claude API rejected the request")
         raise LLMRequestError() from err
+    except ValidationError as err:
+        # The call succeeded but the content doesn't satisfy the schema —
+        # typically a response truncated by max_tokens mid-JSON.
+        logger.exception("Claude API returned output that failed validation")
+        raise LLMRequestError() from err
+
+    if response.parsed_output is None:
+        # Also an HTTP 200: no text block carried parsable output, which is
+        # what a safety refusal looks like (stop_reason="refusal").
+        logger.error(
+            "Claude API returned no parsable output (stop_reason=%s)", response.stop_reason
+        )
+        raise LLMRequestError()
 
     return response.parsed_output

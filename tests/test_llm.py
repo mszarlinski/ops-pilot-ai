@@ -2,6 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from anthropic import APIConnectionError, BadRequestError, RateLimitError
+from pydantic import ValidationError
 
 from app.llm import LLMRequestError, LLMUnavailableError, classify_incident
 from app.models import IncidentAnalysis
@@ -57,6 +58,28 @@ def test_classify_incident_raises_llm_unavailable_on_connection_error():
 
 def test_classify_incident_raises_llm_request_error_on_bad_request():
     error = BadRequestError("bad request", response=_fake_response(400), body=None)
+
+    with patch("app.llm.get_client") as mock_get_client:
+        mock_get_client.return_value.messages.parse.side_effect = error
+
+        with pytest.raises(LLMRequestError):
+            classify_incident("Database connection timeout on prod-db-01")
+
+
+def test_classify_incident_raises_llm_request_error_on_refusal():
+    """A refusal is HTTP 200 with no parsable output: parsed_output is None."""
+    fake_response = MagicMock(parsed_output=None, stop_reason="refusal")
+
+    with patch("app.llm.get_client") as mock_get_client:
+        mock_get_client.return_value.messages.parse.return_value = fake_response
+
+        with pytest.raises(LLMRequestError):
+            classify_incident("Database connection timeout on prod-db-01")
+
+
+def test_classify_incident_raises_llm_request_error_on_unparsable_output():
+    """A response truncated by max_tokens makes the SDK's parse step raise."""
+    error = ValidationError.from_exception_data("IncidentAnalysis", [])
 
     with patch("app.llm.get_client") as mock_get_client:
         mock_get_client.return_value.messages.parse.side_effect = error
