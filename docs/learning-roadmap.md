@@ -55,9 +55,15 @@ keyword-based retrieval.
   (`text[start:start+chunk_size]`, `start` advancing by
   `chunk_size - overlap`) — no manual character accumulation. `app/documents.py`
   persists chunks to SQLite (`chunks` table) via `ingest_documents`.
-- ⬜ **Step 2 — Full-text (keyword) search.** SQLite FTS5 over the chunk
-  corpus. This is the traditional-retrieval baseline you'll compare semantic
-  search against in Step 4.
+- ✅ **Step 2 — Full-text (keyword) search.** `app/search.py` creates a
+  `chunks_fts` FTS5 virtual table (`id`/`document_id` marked `UNINDEXED`, so a
+  query can't match a chunk on its own identifier), rebuilds it from `chunks`
+  on each `index_chunks` call for idempotency, and ranks `MATCH` results with
+  `bm25()`. The score's sign is flipped on the way out so higher means a
+  better match — the convention Step 4's hybrid ranking needs, since cosine
+  similarity is already higher-is-better. This is the traditional-retrieval
+  baseline Step 4 compares semantic search against.
+  *Not derived by the user:* implemented by Claude on request (`e0f03bb`).
 - ⬜ **Step 3 — Semantic search.** Embed the chunks and query them via
   ChromaDB (vector similarity). Run the same queries through both FTS and
   vector search side by side to see where each wins and loses.
