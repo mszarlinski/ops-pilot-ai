@@ -64,9 +64,14 @@ keyword-based retrieval.
   similarity is already higher-is-better. This is the traditional-retrieval
   baseline Step 4 compares semantic search against.
   *Not derived by the user:* implemented by Claude on request (`e0f03bb`).
-- ⬜ **Step 3 — Semantic search.** Embed the chunks and query them via
+- 🟨 **Step 3 — Semantic search.** Embed the chunks and query them via
   ChromaDB (vector similarity). Run the same queries through both FTS and
   vector search side by side to see where each wins and loses.
+  Scaffolded: `app/semantic_search.py` (stubs) and
+  `tests/test_semantic_search.py` (5 failing tests). Embeddings use Chroma's
+  default local model (all-MiniLM-L6-v2 via onnxruntime) — no API key and no
+  per-query cost, which keeps the exercise runnable offline. Awaiting
+  implementation.
 - ⬜ **Step 4 — Hybrid search, reranking & retrieval evaluation.** Combine
   FTS + vector results, add a reranking step, and build a fixed eval set
   (precision/recall@k) to measure retrieval quality — reusing the
