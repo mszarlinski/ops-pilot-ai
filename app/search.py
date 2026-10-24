@@ -42,7 +42,9 @@ def index_chunks(conn: sqlite3.Connection) -> None:
     than inserting every chunk a second time.
     """
     conn.execute("DELETE FROM chunks_fts")
-    conn.execute("INSERT INTO chunks_fts (id, document_id, text) SELECT id, document_id, text FROM chunks")
+    conn.execute(
+        "INSERT INTO chunks_fts (id, document_id, text) SELECT id, document_id, text FROM chunks"
+    )
     conn.commit()
 
 

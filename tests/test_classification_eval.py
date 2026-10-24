@@ -32,23 +32,47 @@ EVAL_CASES = [
     # STORAGE
     ("Database connection timeout on prod-db-01 for the last 15 minutes", "STORAGE", "HIGH"),
     ("S3 bucket ops-pilot-uploads is returning 503 errors on every PUT request", "STORAGE", "HIGH"),
-    ("Disk usage on the archive storage array is at 92% and climbing steadily", "STORAGE", "MEDIUM"),
+    (
+        "Disk usage on the archive storage array is at 92% and climbing steadily",
+        "STORAGE",
+        "MEDIUM",
+    ),
     ("Nightly backup job to cold storage failed with a checksum mismatch", "STORAGE", "HIGH"),
     # BACKEND
     ("Checkout API is returning HTTP 500 for every purchase attempt", "BACKEND", "HIGH"),
-    ("Background job queue processing confirmation emails is running 20 minutes behind", "BACKEND", "MEDIUM"),
+    (
+        "Background job queue processing confirmation emails is running 20 minutes behind",
+        "BACKEND",
+        "MEDIUM",
+    ),
     # NETWORK
-    ("VPN connectivity to the EU data center is down, blocking all remote engineer access", "NETWORK", "HIGH"),
-    ("Intermittent packet loss between app servers and the Redis cache cluster is causing occasional slow requests", "NETWORK", "MEDIUM"),
+    (
+        "VPN connectivity to the EU data center is down, blocking all remote engineer access",
+        "NETWORK",
+        "HIGH",
+    ),
+    (
+        "Intermittent packet loss between app servers and the Redis cache cluster is causing occasional slow requests",
+        "NETWORK",
+        "MEDIUM",
+    ),
     # UI
-    ("Primary navigation menu on the customer portal does not respond to clicks, preventing users from reaching any other page", "UI", "HIGH"),
+    (
+        "Primary navigation menu on the customer portal does not respond to clicks, preventing users from reaching any other page",
+        "UI",
+        "HIGH",
+    ),
     ("User reports the dashboard logo is slightly misaligned on Safari", "UI", "LOW"),
     ("Login page layout is broken on narrow mobile viewports", "UI", "LOW"),
     # OTHER — genuinely doesn't fit STORAGE/BACKEND/NETWORK/UI, unlike a footer
     # typo (UI) or search ordering (BACKEND), which were mislabeled here
     # earlier and are now correctly STORAGE/BACKEND/UI cases above instead.
     ("New hire's badge access request was never provisioned by the IT helpdesk", "OTHER", "LOW"),
-    ("Status page was not updated during last week's outage, confusing customers", "OTHER", "MEDIUM"),
+    (
+        "Status page was not updated during last week's outage, confusing customers",
+        "OTHER",
+        "MEDIUM",
+    ),
 ]
 
 ACCURACY_THRESHOLD = 0.9

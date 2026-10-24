@@ -9,6 +9,6 @@ class IncidentRequest(BaseModel):
 
 class IncidentAnalysis(BaseModel):
     category: Literal["STORAGE", "BACKEND", "NETWORK", "UI", "OTHER"]
-    severity: Literal["LOW","MEDIUM", "HIGH"]
+    severity: Literal["LOW", "MEDIUM", "HIGH"]
     summary: str
     suggested_action: str

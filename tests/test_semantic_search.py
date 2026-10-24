@@ -17,7 +17,12 @@ from app.semantic_search import create_collection, index_chunks, search_semantic
 # Deliberately worded so that "disk filling up" shares no vocabulary with the
 # storage chunk it should retrieve — the paraphrase case FTS cannot handle.
 CHUNKS = [
-    ("storage-0", "storage", 0, "The archive storage array is nearing capacity at 92% utilisation."),
+    (
+        "storage-0",
+        "storage",
+        0,
+        "The archive storage array is nearing capacity at 92% utilisation.",
+    ),
     ("vpn-0", "vpn", 0, "Remote engineers cannot reach the EU data center over the VPN."),
     ("ui-0", "ui", 0, "The dashboard logo is misaligned on the homepage."),
 ]

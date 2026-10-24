@@ -52,7 +52,9 @@ def ingest_documents(
     init_db(conn)
     count = 0
     for document_id, text in load_documents(directory):
-        for index, text_chunk in enumerate(chunk_text(text, chunk_size=chunk_size, overlap=overlap)):
+        for index, text_chunk in enumerate(
+            chunk_text(text, chunk_size=chunk_size, overlap=overlap)
+        ):
             conn.execute(
                 "INSERT INTO chunks (id, document_id, chunk_index, text) VALUES (?, ?, ?, ?)",
                 (f"{document_id}-{index}", document_id, index, text_chunk),

@@ -36,6 +36,7 @@ def test_chunk_text_consecutive_chunks_overlap():
     for current_chunk, next_chunk in zip(chunks, chunks[1:]):
         assert current_chunk[-5:] == next_chunk[:5]
 
+
 def test_chunk_empty_text():
     text = ""
 

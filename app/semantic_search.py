@@ -45,9 +45,7 @@ def index_chunks(conn: sqlite3.Connection, collection: chromadb.Collection) -> N
     raise NotImplementedError("Lab 02 Step 3 exercise: embed chunks into the collection")
 
 
-def search_semantic(
-    collection: chromadb.Collection, query: str, k: int = 5
-) -> list[SearchResult]:
+def search_semantic(collection: chromadb.Collection, query: str, k: int = 5) -> list[SearchResult]:
     """Return the top-k chunks most similar to query, best match first.
 
     Lab 02 Step 3 exercise: query the collection and map each hit onto the
