@@ -71,7 +71,8 @@ directly, not to learn a framework's abstractions over them.
 
 ## Current learning stage
 
-**Lab 01 (Direct LLM Integration) is complete. Starting Lab 02 (RAG).**
+**Lab 01 (Direct LLM Integration) is complete. Lab 02 (RAG) Steps 1–3 are
+complete; next is Step 4 (hybrid search, reranking & retrieval evaluation).**
 
 - `app/llm.py` calls the Claude API (`client.messages.parse`) with structured
   outputs constrained to `Literal[...]` category/severity enums, a
@@ -80,7 +81,12 @@ directly, not to learn a framework's abstractions over them.
 - `tests/test_classification_eval.py` is a fixed, hand-labeled eval
   (opt-in via `RUN_EVALS=1`, hits the real API) measuring classification
   accuracy — currently 100% on 13 cases.
-- No vector DB, queue, or agent framework yet — Lab 02 introduces ChromaDB
-  and SQLite FTS for retrieval.
+- `app/chunking.py` + `app/documents.py` chunk `data/runbooks/*.md` into a
+  SQLite `chunks` table. Two retrievers sit on top, both returning
+  `SearchResult` with a higher-is-better `score`: `app/search.py` (SQLite
+  FTS5, BM25 sign-flipped) and `app/semantic_search.py` (ChromaDB, cosine,
+  `score = 1 - distance`, Chroma's default local embedding model).
+- No hybrid fusion, reranking, or retrieval eval yet (Lab 02 Step 4). No
+  queue or agent framework yet.
 
 See `docs/learning-roadmap.md` for the full lab plan and completion tracking.
