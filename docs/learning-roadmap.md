@@ -64,14 +64,20 @@ keyword-based retrieval.
   similarity is already higher-is-better. This is the traditional-retrieval
   baseline Step 4 compares semantic search against.
   *Not derived by the user:* implemented by Claude on request (`182fd8f`).
-- 🟨 **Step 3 — Semantic search.** Embed the chunks and query them via
-  ChromaDB (vector similarity). Run the same queries through both FTS and
-  vector search side by side to see where each wins and loses.
-  Scaffolded: `app/semantic_search.py` (stubs) and
-  `tests/test_semantic_search.py` (5 failing tests). Embeddings use Chroma's
-  default local model (all-MiniLM-L6-v2 via onnxruntime) — no API key and no
-  per-query cost, which keeps the exercise runnable offline. Awaiting
-  implementation.
+- ✅ **Step 3 — Semantic search.** `app/semantic_search.py` embeds the
+  chunks into a ChromaDB collection configured for cosine distance
+  (`hnsw:space: cosine`) rather than Chroma's default squared L2, upserts by
+  chunk id for idempotency (mirroring the FTS `index_chunks`), and stores
+  `document_id` as metadata so hits trace back to their source runbook.
+  Chroma's cosine *distance* is converted to `score = 1 - distance`, so both
+  retrievers share the higher-is-better `SearchResult` convention Step 4
+  fuses on. Embeddings use Chroma's default local model (all-MiniLM-L6-v2
+  via onnxruntime) — no API key and no per-query cost. The paraphrase test
+  ("disk filling up" → the storage-capacity chunk) shows FTS returning
+  nothing where vector search ranks the right chunk first; the fixture's two
+  chunks of the `vpn` document make the best-match test rank within a
+  document, not just pick the right topic.
+  *Not derived by the user:* implemented by Claude on request (`9b9d1f6`).
 - ⬜ **Step 4 — Hybrid search, reranking & retrieval evaluation.** Combine
   FTS + vector results, add a reranking step, and build a fixed eval set
   (precision/recall@k) to measure retrieval quality — reusing the
