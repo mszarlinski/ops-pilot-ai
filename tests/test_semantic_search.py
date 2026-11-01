@@ -24,6 +24,7 @@ CHUNKS = [
         "The archive storage array is nearing capacity at 92% utilisation.",
     ),
     ("vpn-0", "vpn", 0, "Remote engineers cannot reach the EU data center over the VPN."),
+    ("vpn-1", "vpn", 1, "VPN is not required to reach publicly accessible resources."),
     ("ui-0", "ui", 0, "The dashboard logo is misaligned on the homepage."),
 ]
 
