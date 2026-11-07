@@ -80,9 +80,21 @@ keyword-based retrieval.
   *Not derived by the user:* implemented by Claude on request (`9b9d1f6`).
 - 🟨 **Step 4 — Hybrid search, reranking & retrieval evaluation.** Worked as
   three exercises, one at a time:
-  - 🟨 **4a — Hybrid fusion (RRF).** Scaffolded: `app/hybrid_search.py`
-    (`reciprocal_rank_fusion`, `search_hybrid` stubs) and
-    `tests/test_hybrid_search.py` (7 failing tests). Awaiting implementation.
+  - ✅ **4a — Hybrid fusion (RRF).** `app/hybrid_search.py` fuses the FTS
+    and vector rankings with Reciprocal Rank Fusion: each chunk scores
+    `Σ 1 / (rrf_k + rank)` (1-based, `rrf_k = 60`) across the lists it
+    appears in, so a chunk both retrievers agree on beats either one's
+    solo winner. Raw scores are ignored on purpose — BM25 (unbounded) and
+    cosine (~0..1) aren't on a shared scale, and summing them would let
+    FTS dominate. `search_hybrid` fetches `4 * k` candidates per retriever
+    so one can lift a chunk the other ranked just below the cut-off.
+    Wiring FTS into every hybrid query exposed that `search_fulltext`
+    passed raw text to `MATCH`, so `92%`, apostrophes, and `prod-db-01`
+    crashed it; terms are now quoted so queries are plain text
+    (`5bc0843`). Open question for 4c: terms are still implicitly ANDed,
+    so long natural-language queries rarely match in FTS — whether `OR`
+    improves recall is for the eval to measure.
+    *Not derived by the user:* implemented by Claude on request (`b9f39c4`).
   - ⬜ **4b — Reranking.**
   - ⬜ **4c — Retrieval evaluation.**
 
