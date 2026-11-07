@@ -78,8 +78,15 @@ keyword-based retrieval.
   chunks of the `vpn` document make the best-match test rank within a
   document, not just pick the right topic.
   *Not derived by the user:* implemented by Claude on request (`9b9d1f6`).
-- ⬜ **Step 4 — Hybrid search, reranking & retrieval evaluation.** Combine
-  FTS + vector results, add a reranking step, and build a fixed eval set
+- 🟨 **Step 4 — Hybrid search, reranking & retrieval evaluation.** Worked as
+  three exercises, one at a time:
+  - 🟨 **4a — Hybrid fusion (RRF).** Scaffolded: `app/hybrid_search.py`
+    (`reciprocal_rank_fusion`, `search_hybrid` stubs) and
+    `tests/test_hybrid_search.py` (7 failing tests). Awaiting implementation.
+  - ⬜ **4b — Reranking.**
+  - ⬜ **4c — Retrieval evaluation.**
+
+  Combine FTS + vector results, add a reranking step, and build a fixed eval set
   (precision/recall@k) to measure retrieval quality — reusing the
   evaluation pattern from Lab 01 Step 4, applied to retrieval instead of
   classification. The eval set is deliberately split into two query types:
@@ -89,8 +96,8 @@ keyword-based retrieval.
   nearing capacity"), where FTS is expected to miss and vector search is
   expected to hit. This isolates *where* semantic search earns its cost —
   recall on paraphrases, not raw query latency (vector search is slower
-  per-query than FTS at this corpus size, since it requires an embedding
-  API call; its advantage is retrieval quality, not speed).
+  per-query than FTS at this corpus size, since every query must first be
+  embedded; its advantage is retrieval quality, not speed).
 
 ## Lab 03 — Tool / Function Calling
 
