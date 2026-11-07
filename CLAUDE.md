@@ -71,8 +71,9 @@ directly, not to learn a framework's abstractions over them.
 
 ## Current learning stage
 
-**Lab 01 (Direct LLM Integration) is complete. Lab 02 (RAG) Steps 1–3 are
-complete; next is Step 4 (hybrid search, reranking & retrieval evaluation).**
+**Lab 01 (Direct LLM Integration) is complete. Lab 02 (RAG) Steps 1–3 and
+4a (hybrid fusion) are complete; next is Step 4b (reranking), then 4c
+(retrieval evaluation).**
 
 - `app/llm.py` calls the Claude API (`client.messages.parse`) with structured
   outputs constrained to `Literal[...]` category/severity enums, a
@@ -84,9 +85,11 @@ complete; next is Step 4 (hybrid search, reranking & retrieval evaluation).**
 - `app/chunking.py` + `app/documents.py` chunk `data/runbooks/*.md` into a
   SQLite `chunks` table. Two retrievers sit on top, both returning
   `SearchResult` with a higher-is-better `score`: `app/search.py` (SQLite
-  FTS5, BM25 sign-flipped) and `app/semantic_search.py` (ChromaDB, cosine,
-  `score = 1 - distance`, Chroma's default local embedding model).
-- No hybrid fusion, reranking, or retrieval eval yet (Lab 02 Step 4). No
-  queue or agent framework yet.
+  FTS5, BM25 sign-flipped, query terms quoted so input is plain text) and
+  `app/semantic_search.py` (ChromaDB, cosine, `score = 1 - distance`,
+  Chroma's default local embedding model). `app/hybrid_search.py` fuses
+  them with Reciprocal Rank Fusion (rank-only, `rrf_k = 60`).
+- No reranking or retrieval eval yet (Lab 02 Steps 4b/4c). No queue or
+  agent framework yet.
 
 See `docs/learning-roadmap.md` for the full lab plan and completion tracking.
