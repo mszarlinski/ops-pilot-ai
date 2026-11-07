@@ -54,7 +54,13 @@ def search_fulltext(conn: sqlite3.Connection, query: str, k: int = 5) -> list[Se
     SQLite's bm25() is more negative for better matches, so rows are ordered
     ascending and the sign is flipped on the way out: a higher `score` means
     a better match, which is the convention Step 4's hybrid ranking needs.
+
+    The query is plain incident text, not FTS5 syntax: each whitespace-
+    separated term is quoted (embedded quotes doubled) so punctuation and
+    words like AND/OR are matched literally instead of parsed as operators.
+    A hyphenated identifier such as `prod-db-01` becomes a phrase match.
     """
+    query = " ".join('"' + term.replace('"', '""') + '"' for term in query.split())
     rows = conn.execute(
         """
         SELECT id, document_id, text, bm25(chunks_fts) AS rank

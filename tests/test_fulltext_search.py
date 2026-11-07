@@ -13,7 +13,12 @@ def conn():
     connection.executemany(
         "INSERT INTO chunks (id, document_id, chunk_index, text) VALUES (?, ?, ?, ?)",
         [
-            ("db-0", "db", 0, "The database connection pool is exhausted, causing timeouts."),
+            (
+                "db-0",
+                "db",
+                0,
+                "The database connection pool on prod-db-01 is exhausted, causing timeouts.",
+            ),
             ("s3-0", "s3", 0, "The S3 bucket is returning 503 errors on every upload."),
             ("ui-0", "ui", 0, "The dashboard logo is misaligned on the homepage."),
         ],
@@ -43,6 +48,18 @@ def test_search_fulltext_returns_empty_for_no_match(conn):
 
 
 def test_search_fulltext_respects_k_limit(conn):
-    results = search_fulltext(conn, "bucket OR database OR logo", k=1)
+    results = search_fulltext(conn, "the", k=1)
 
     assert len(results) == 1
+
+
+@pytest.mark.parametrize("query", ["disk at 92%", "what's wrong?", 'error "503"', "AND OR NOT"])
+def test_search_fulltext_treats_query_as_plain_text(conn, query):
+    """Incident text is not FTS5 query syntax: punctuation and operators must not raise."""
+    search_fulltext(conn, query, k=5)
+
+
+def test_search_fulltext_matches_hyphenated_identifier(conn):
+    results = search_fulltext(conn, "prod-db-01", k=5)
+
+    assert results[0].chunk_id == "db-0"
