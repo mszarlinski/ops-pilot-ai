@@ -10,7 +10,8 @@ import sqlite3
 
 import chromadb
 
-from app.search import SearchResult
+from app.search import SearchResult, search_fulltext
+from app.semantic_search import search_semantic
 
 RRF_K = 60
 
@@ -20,14 +21,25 @@ def reciprocal_rank_fusion(
 ) -> list[SearchResult]:
     """Fuse several best-first result lists into one, best first, top k.
 
-    Lab 02 Step 4a exercise: each chunk scores the sum, over every list it
-    appears in, of `1 / (rrf_k + rank)`, where rank is 1-based. A chunk that
-    is absent from a list contributes nothing for that list. Return each
-    chunk once, with `score` set to its fused RRF score.
+    Each chunk scores the sum, over every list it appears in, of
+    `1 / (rrf_k + rank)`, where rank is 1-based; a list a chunk is absent
+    from contributes nothing. Each chunk is returned once, with `score` set
+    to its fused RRF score.
 
     The input scores are deliberately ignored: only positions matter.
     """
-    raise NotImplementedError("Lab 02 Step 4a exercise: implement reciprocal rank fusion")
+    fused_scores: dict[str, float] = {}
+    first_seen: dict[str, SearchResult] = {}
+    for results in result_lists:
+        for rank, hit in enumerate(results, start=1):
+            fused_scores[hit.chunk_id] = fused_scores.get(hit.chunk_id, 0.0) + 1 / (rrf_k + rank)
+            first_seen.setdefault(hit.chunk_id, hit)
+
+    ranked = sorted(fused_scores, key=fused_scores.get, reverse=True)[:k]
+    return [
+        first_seen[chunk_id].model_copy(update={"score": fused_scores[chunk_id]})
+        for chunk_id in ranked
+    ]
 
 
 def search_hybrid(
@@ -35,9 +47,15 @@ def search_hybrid(
 ) -> list[SearchResult]:
     """Return the top-k chunks for query by fusing FTS and vector results.
 
-    Lab 02 Step 4a exercise: run `search_fulltext` and `search_semantic`,
-    then fuse their result lists with `reciprocal_rank_fusion`. Fetch a
-    deeper candidate list than k from each retriever, so a chunk ranked just
-    below the cut-off by one retriever can still be lifted by the other.
+    Each retriever is asked for a deeper candidate list (4 * k) than is
+    returned, so a chunk ranked just below the cut-off by one retriever can
+    still be lifted into the top k by the other.
     """
-    raise NotImplementedError("Lab 02 Step 4a exercise: wire both retrievers into RRF")
+    candidates = 4 * k
+    return reciprocal_rank_fusion(
+        [
+            search_fulltext(conn, query, k=candidates),
+            search_semantic(collection, query, k=candidates),
+        ],
+        k=k,
+    )
